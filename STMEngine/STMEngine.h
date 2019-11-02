@@ -1,5 +1,5 @@
-﻿#ifndef STMM
-#define STMM
+#ifndef STM_DEF
+#define STM_DEF
 
 #pragma comment(lib, "user32.lib")		// Visual Studio Only
 #pragma comment(lib, "gdi32.lib")		// For other Windows Compilers please add
@@ -1849,5 +1849,9 @@ namespace STM
 	std::map<size_t, uint8_t> PixelGameEngine::mapKeys;
 	STM::PixelGameEngine* STM::PGEX::pge = nullptr;
 
+<<<<<<< HEAD
 }
 #endif
+=======
+#endif
+>>>>>>> bd62180da48bef41dd8c307f32edf3ed5667f967
