@@ -1,7 +1,7 @@
 ﻿#define OLC_PGE_APPLICATION
 #include "STMEngine.h"
 
-class Example : public olc::PixelGameEngine
+class Example : public STM::PixelGameEngine
 {
 public:
 	Example()
@@ -21,7 +21,7 @@ public:
 		// called once per frame
 		for (int x = 0; x < ScreenWidth(); x++)
 			for (int y = 0; y < ScreenHeight(); y++)
-				Draw(x, y, olc::Pixel(rand() % 255, rand() % 255, rand() % 255));
+				Draw(x, y, STM::Pixel(rand() % 255, rand() % 255, rand() % 255));
 		return true;
 	}
 };

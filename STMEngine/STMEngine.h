@@ -1,198 +1,11 @@
-﻿/*
-	olcPixelGameEngine.h
+﻿#ifndef STMM
+#define STMM
 
-	+-------------------------------------------------------------+
-	|           OneLoneCoder Pixel Game Engine v1.19              |
-	| "Like the command prompt console one, but not..." - javidx9 |
-	+-------------------------------------------------------------+
-
-	What is this?
-	~~~~~~~~~~~~~
-	The olcConsoleGameEngine has been a surprising and wonderful success for me,
-	and I'm delighted how people have reacted so positively towards it, so thanks
-	for that.
-
-	However, there are limitations that I simply cannot avoid. Firstly, I need to
-	maintain several different versions of it to accommodate users on Windows7,
-	8, 10, Linux, Mac, Visual Studio & Code::Blocks. Secondly, this year I've been
-	pushing the console to the limits of its graphical capabilities	and the effect
-	is becoming underwhelming. The engine itself is not slow at all, but the process
-	that Windows uses to draw the command prompt to the screen is, and worse still,
-	it's dynamic based upon the variation of character colours and glyphs. Sadly
-	I have no control over this, and recent videos that are extremely graphical
-	(for a command prompt :P ) have been dipping to unacceptable framerates. As
-	the channel	has been popular with aspiring game developers, I'm concerned that
-	the visual appeal of the command prompt is perhaps limited to us oldies, and I
-	dont want to alienate younger learners. Finally, I'd like to demonstrate many
-	more algorithms and image processing that exist in the graphical domain, for
-	which the console is insufficient.
-
-	For this reason, I have created olcPixelGameEngine! The look and feel to the
-	programmer is almost identical, so all of my existing code from the videos is
-	easily portable, and the programmer uses this file in exactly the same way. But
-	I've decided that rather than just build a command prompt emulator,	that I
-	would at least harness some modern(ish) portable technologies.
-
-	As a result, the olcPixelGameEngine supports 32-bit colour, is written in a
-	cross-platform style, uses modern(ish) C++ conventions and most importantly,
-	renders much much faster. I	will use this version when my applications are
-	predominantly graphics based, but use the console version when they are
-	predominantly text based - Don't worry, loads more command prompt silliness to
-	come yet, but evolution is important!!
-
-	License (OLC-3)
-	~~~~~~~~~~~~~~~
-
-	Copyright 2018 - 2019 OneLoneCoder.com
-
-	Redistribution and use in source and binary forms, with or without modification,
-	are permitted provided that the following conditions are met:
-
-	1. Redistributions or derivations of source code must retain the above copyright
-	notice, this list of conditions and the following disclaimer.
-
-	2. Redistributions or derivative works in binary form must reproduce the above
-	copyright notice. This list of conditions and the following	disclaimer must be
-	reproduced in the documentation and/or other materials provided with the distribution.
-
-	3. Neither the name of the copyright holder nor the names of its contributors may
-	be used to endorse or promote products derived from this software without specific
-	prior written permission.
-
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS	"AS IS" AND ANY
-	EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
-	SHALL THE COPYRIGHT	HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-	INCIDENTAL,	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-	TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-	BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-	ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	SUCH DAMAGE.
-
-	Links
-	~~~~~
-	YouTube:	https://www.youtube.com/javidx9
-				https://www.youtube.com/javidx9extra
-	Discord:	https://discord.gg/WhwHUMV
-	Twitter:	https://www.twitter.com/javidx9
-	Twitch:		https://www.twitch.tv/javidx9
-	GitHub:		https://www.github.com/onelonecoder
-	Homepage:	https://www.onelonecoder.com
-	Patreon:	https://www.patreon.com/javidx9
-
-	Relevant Videos
-	~~~~~~~~~~~~~~~
-	https://youtu.be/kRH6oJLFYxY Introducing olcPixelGameEngine
-
-	Compiling in Linux
-	~~~~~~~~~~~~~~~~~~
-	You will need a modern C++ compiler, so update yours!
-	To compile use the command:
-
-	g++ -o YourProgName YourSource.cpp -lX11 -lGL -lpthread -lpng
-
-	On some Linux configurations, the frame rate is locked to the refresh
-	rate of the monitor. This engine tries to unlock it but may not be
-	able to, in which case try launching your program like this:
-
-	vblank_mode=0 ./YourProgName
-
-
-	Compiling in Code::Blocks on Windows
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	Well I wont judge you, but make sure your Code::Blocks installation
-	is really up to date - you may even consider updating your C++ toolchain
-	to use MinGW32-W64, so google this. You will also need to enable C++14
-	in your build options, and add to your linker the following libraries:
-	user32 gdi32 opengl32 gdiplus
-
-	Ports
-	~~~~~
-	olc::PixelGameEngine has been ported and tested with varying degrees of
-	success to: WinXP, Win7, Win8, Win10, Various Linux, Rapberry Pi,
-	Chromebook, Playstation Portable (PSP) and Nintendo Switch. If you are
-	interested in the details of these ports, come and visit the Discord!
-
-	Thanks
-	~~~~~~
-	I'd like to extend thanks to Eremiell, slavka, gurkanctn, Phantim,
-	JackOJC, KrossX, Huhlig, Dragoneye, Appa, JustinRichardsMusic, SliceNDice
-	Ralakus, Gorbit99, raoul, joshinils, benedani & MagetzUb for advice, ideas and
-	testing, and I'd like to extend my appreciation to the 96K YouTube followers,
-	47 Patreons and 4.5K Discord server	members who give me the motivation to keep
-	going with all this :D
-
-	Special thanks to those who bring gifts!
-	GnarGnarHead.......Domina
-	Gorbit99...........Bastion, Ori & The Blind Forest
-	Marti Morta........Gris
-
-	Special thanks to my Patreons too - I wont name you on here, but I've
-	certainly enjoyed my tea and flapjacks :D
-
-	Author
-	~~~~~~
-	David Barr, aka javidx9, �OneLoneCoder 2018, 2019
-*/
-
-//////////////////////////////////////////////////////////////////////////////////////////
-
-/* Example Usage (main.cpp)
-	#define OLC_PGE_APPLICATION
-	#include "olcPixelGameEngine.h"
-	// Override base class with your custom functionality
-	class Example : public olc::PixelGameEngine
-	{
-	public:
-		Example()
-		{
-			sAppName = "Example";
-		}
-	public:
-		bool OnUserCreate() override
-		{
-			// Called once at the start, so create things here
-			return true;
-		}
-		bool OnUserUpdate(float fElapsedTime) override
-		{
-			// called once per frame, draws random coloured pixels
-			for (int x = 0; x < ScreenWidth(); x++)
-				for (int y = 0; y < ScreenHeight(); y++)
-					Draw(x, y, olc::Pixel(rand() % 255, rand() % 255, rand()% 255));
-			return true;
-		}
-	};
-	int main()
-	{
-		Example demo;
-		if (demo.Construct(256, 240, 4, 4))
-			demo.Start();
-		return 0;
-	}
-*/
-
-#ifndef OLC_PGE_DEF
-#define OLC_PGE_DEF
-
-#ifdef _WIN32
-// Link to libraries
-#ifndef __MINGW32__
 #pragma comment(lib, "user32.lib")		// Visual Studio Only
 #pragma comment(lib, "gdi32.lib")		// For other Windows Compilers please add
 #pragma comment(lib, "opengl32.lib")	// these libs to your linker input
 #pragma comment(lib, "gdiplus.lib")
-#else
-	// In Code::Blocks, Select C++14 in your build options, and add the
-	// following libs to your linker: user32 gdi32 opengl32 gdiplus
-#if !defined _WIN32_WINNT
-#ifdef HAVE_MSMF
-#define _WIN32_WINNT 0x0600 // Windows Vista
-#else
-#define _WIN32_WINNT 0x0500 // Windows 2000
-#endif
-#endif
+
 #endif
 	// Include WinAPI
 #include <windows.h>
@@ -202,15 +15,7 @@
 #include <GL/gl.h>
 typedef BOOL(WINAPI wglSwapInterval_t) (int interval);
 static wglSwapInterval_t *wglSwapInterval;
-#else
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <png.h>
-typedef int(glSwapInterval_t)(Display *dpy, GLXDrawable drawable, int interval);
-static glSwapInterval_t *glSwapIntervalEXT;
-#endif
+
 
 
 // Standard includes
@@ -233,7 +38,7 @@ static glSwapInterval_t *glSwapIntervalEXT;
 #undef min
 #undef max
 
-namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
+namespace STM 
 {
 	struct Pixel
 	{
@@ -249,21 +54,21 @@ namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
 		Pixel();
 		Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = 255);
 		Pixel(uint32_t p);
+
 		enum Mode { NORMAL, MASK, ALPHA, CUSTOM };
 
 		bool operator==(const Pixel& p) const;
 		bool operator!=(const Pixel& p) const;
 	};
 
-	// Some constants for symbolic naming of Pixels
 	static const Pixel
 		WHITE(255, 255, 255),
 		GREY(192, 192, 192), DARK_GREY(128, 128, 128), VERY_DARK_GREY(64, 64, 64),
-		RED(255, 0, 0), DARK_RED(128, 0, 0), VERY_DARK_RED(64, 0, 0),
+		RED(255, 0, 0),		 DARK_RED(128, 0, 0),	   VERY_DARK_RED(64, 0, 0),
 		YELLOW(255, 255, 0), DARK_YELLOW(128, 128, 0), VERY_DARK_YELLOW(64, 64, 0),
-		GREEN(0, 255, 0), DARK_GREEN(0, 128, 0), VERY_DARK_GREEN(0, 64, 0),
-		CYAN(0, 255, 255), DARK_CYAN(0, 128, 128), VERY_DARK_CYAN(0, 64, 64),
-		BLUE(0, 0, 255), DARK_BLUE(0, 0, 128), VERY_DARK_BLUE(0, 0, 64),
+		GREEN(0, 255, 0),    DARK_GREEN(0, 128, 0),    VERY_DARK_GREEN(0, 64, 0),
+		CYAN(0, 255, 255),   DARK_CYAN(0, 128, 128),   VERY_DARK_CYAN(0, 64, 64),
+		BLUE(0, 0, 255),	 DARK_BLUE(0, 0, 128),	   VERY_DARK_BLUE(0, 0, 64),
 		MAGENTA(255, 0, 255), DARK_MAGENTA(128, 0, 128), VERY_DARK_MAGENTA(64, 0, 64),
 		BLACK(0, 0, 0),
 		BLANK(0, 0, 0, 0);
@@ -324,8 +129,6 @@ namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
 	};
 
 	//=============================================================
-
-
 	class ResourcePack
 	{
 	public:
@@ -334,24 +137,18 @@ namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
 		struct sEntry : public std::streambuf {
 			uint32_t nID, nFileOffset, nFileSize; uint8_t* data; void _config() { this->setg((char*)data, (char*)data, (char*)(data + nFileSize)); }
 		};
-
 	public:
-		olc::rcode AddToPack(std::string sFile);
-
+		STM::rcode AddToPack(std::string sFile);
 	public:
-		olc::rcode SavePack(std::string sFile);
-		olc::rcode LoadPack(std::string sFile);
-		olc::rcode ClearPack();
-
+		STM::rcode SavePack(std::string sFile);
+		STM::rcode LoadPack(std::string sFile);
+		STM::rcode ClearPack();
 	public:
-		olc::ResourcePack::sEntry GetStreamBuffer(std::string sFile);
+		STM::ResourcePack::sEntry GetStreamBuffer(std::string sFile);
 
 	private:
-
 		std::map<std::string, sEntry> mapFiles;
 	};
-
-	//=============================================================
 
 	// A bitmap-like structure that stores a 2D array of Pixels
 	class Sprite
@@ -359,41 +156,29 @@ namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
 	public:
 		Sprite();
 		Sprite(std::string sImageFile);
-		Sprite(std::string sImageFile, olc::ResourcePack *pack);
+		Sprite(std::string sImageFile, STM::ResourcePack *pack);
 		Sprite(int32_t w, int32_t h);
 		~Sprite();
-
 	public:
-		olc::rcode LoadFromFile(std::string sImageFile, olc::ResourcePack *pack = nullptr);
-		olc::rcode LoadFromPGESprFile(std::string sImageFile, olc::ResourcePack *pack = nullptr);
-		olc::rcode SaveToPGESprFile(std::string sImageFile);
-
+		STM::rcode LoadFromFile(std::string sImageFile, STM::ResourcePack *pack = nullptr);
+		STM::rcode LoadFromPGESprFile(std::string sImageFile, STM::ResourcePack *pack = nullptr);
+		STM::rcode SaveToPGESprFile(std::string sImageFile);
 	public:
 		int32_t width = 0;
 		int32_t height = 0;
 		enum Mode { NORMAL, PERIODIC };
-
 	public:
-		void SetSampleMode(olc::Sprite::Mode mode = olc::Sprite::Mode::NORMAL);
+		void SetSampleMode(STM::Sprite::Mode mode = STM::Sprite::Mode::NORMAL);
 		Pixel GetPixel(int32_t x, int32_t y);
 		bool  SetPixel(int32_t x, int32_t y, Pixel p);
 
 		Pixel Sample(float x, float y);
 		Pixel SampleBL(float u, float v);
 		Pixel* GetData();
-
 	private:
 		Pixel *pColData = nullptr;
 		Mode modeSample = Mode::NORMAL;
-
-#ifdef OLC_DBG_OVERDRAW
-	public:
-		static int nOverdrawCount;
-#endif
-
 	};
-
-	//=============================================================
 
 	enum Key
 	{
@@ -408,17 +193,14 @@ namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
 		NP_MUL, NP_DIV, NP_ADD, NP_SUB, NP_DECIMAL,
 	};
 
-
-	//=============================================================
-
 	class PixelGameEngine
 	{
 	public:
 		PixelGameEngine();
 
 	public:
-		olc::rcode	Construct(uint32_t screen_w, uint32_t screen_h, uint32_t pixel_w, uint32_t pixel_h, bool full_screen = false, bool vsync = false);
-		olc::rcode	Start();
+		STM::rcode	Construct(uint32_t screen_w, uint32_t screen_h, uint32_t pixel_w, uint32_t pixel_h, bool full_screen = false, bool vsync = false);
+		STM::rcode	Start();
 
 	public: // Override Interfaces
 		// Called once on application startup, use to load your resources
@@ -465,35 +247,35 @@ namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
 		void SetPixelMode(Pixel::Mode m);
 		Pixel::Mode GetPixelMode();
 		// Use a custom blend function
-		void SetPixelMode(std::function<olc::Pixel(const int x, const int y, const olc::Pixel& pSource, const olc::Pixel& pDest)> pixelMode);
+		void SetPixelMode(std::function<STM::Pixel(const int x, const int y, const STM::Pixel& pSource, const STM::Pixel& pDest)> pixelMode);
 		// Change the blend factor form between 0.0f to 1.0f;
 		void SetPixelBlend(float fBlend);
 		// Offset texels by sub-pixel amount (advanced, do not use)
 		void SetSubPixelOffset(float ox, float oy);
 
 		// Draws a single Pixel
-		virtual bool Draw(int32_t x, int32_t y, Pixel p = olc::WHITE);
+		virtual bool Draw(int32_t x, int32_t y, Pixel p = STM::WHITE);
 		// Draws a line from (x1,y1) to (x2,y2)
-		void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, Pixel p = olc::WHITE, uint32_t pattern = 0xFFFFFFFF);
+		void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, Pixel p = STM::WHITE, uint32_t pattern = 0xFFFFFFFF);
 		// Draws a circle located at (x,y) with radius
-		void DrawCircle(int32_t x, int32_t y, int32_t radius, Pixel p = olc::WHITE, uint8_t mask = 0xFF);
+		void DrawCircle(int32_t x, int32_t y, int32_t radius, Pixel p = STM::WHITE, uint8_t mask = 0xFF);
 		// Fills a circle located at (x,y) with radius
-		void FillCircle(int32_t x, int32_t y, int32_t radius, Pixel p = olc::WHITE);
+		void FillCircle(int32_t x, int32_t y, int32_t radius, Pixel p = STM::WHITE);
 		// Draws a rectangle at (x,y) to (x+w,y+h)
-		void DrawRect(int32_t x, int32_t y, int32_t w, int32_t h, Pixel p = olc::WHITE);
+		void DrawRect(int32_t x, int32_t y, int32_t w, int32_t h, Pixel p = STM::WHITE);
 		// Fills a rectangle at (x,y) to (x+w,y+h)
-		void FillRect(int32_t x, int32_t y, int32_t w, int32_t h, Pixel p = olc::WHITE);
+		void FillRect(int32_t x, int32_t y, int32_t w, int32_t h, Pixel p = STM::WHITE);
 		// Draws a triangle between points (x1,y1), (x2,y2) and (x3,y3)
-		void DrawTriangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, Pixel p = olc::WHITE);
+		void DrawTriangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, Pixel p = STM::WHITE);
 		// Flat fills a triangle between points (x1,y1), (x2,y2) and (x3,y3)
-		void FillTriangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, Pixel p = olc::WHITE);
+		void FillTriangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, Pixel p = STM::WHITE);
 		// Draws an entire sprite at location (x,y)
 		void DrawSprite(int32_t x, int32_t y, Sprite *sprite, uint32_t scale = 1);
 		// Draws an area of a sprite at location (x,y), where the
 		// selected area is (ox,oy) to (ox+w,oy+h)
 		void DrawPartialSprite(int32_t x, int32_t y, Sprite *sprite, int32_t ox, int32_t oy, int32_t w, int32_t h, uint32_t scale = 1);
 		// Draws a single line of text
-		void DrawString(int32_t x, int32_t y, std::string sText, Pixel col = olc::WHITE, uint32_t scale = 1);
+		void DrawString(int32_t x, int32_t y, std::string sText, Pixel col = STM::WHITE, uint32_t scale = 1);
 		// Clears entire draw target to Pixel
 		void Clear(Pixel p);
 		// Resize the primary screen sprite
@@ -534,7 +316,7 @@ namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
 		float		fFrameTimer = 1.0f;
 		int			nFrameCount = 0;
 		Sprite		*fontSprite = nullptr;
-		std::function<olc::Pixel(const int x, const int y, const olc::Pixel&, const olc::Pixel&)> funcPixelMode;
+		std::function<STM::Pixel(const int x, const int y, const STM::Pixel&, const STM::Pixel&)> funcPixelMode;
 
 		static std::map<size_t, uint8_t> mapKeys;
 		bool		pKeyNewState[256]{ 0 };
@@ -548,10 +330,7 @@ namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
 #ifdef _WIN32
 		HDC			glDeviceContext = nullptr;
 		HGLRC		glRenderContext = nullptr;
-#else
-		GLXContext	glDeviceContext = nullptr;
-		GLXContext	glRenderContext = nullptr;
-#endif
+
 		GLuint		glBuffer;
 
 		void		EngineThread();
@@ -568,64 +347,26 @@ namespace olc // All OneLoneCoder stuff will now exist in the "olc" namespace
 		bool olc_OpenGLCreate();
 		void olc_ConstructFontSheet();
 
-
-#ifdef _WIN32
 		// Windows specific window handling
 		HWND olc_hWnd = nullptr;
 		HWND olc_WindowCreate();
 		std::wstring wsAppName;
 		static LRESULT CALLBACK olc_WindowEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-#else
-		// Non-Windows specific window handling
-		Display*				olc_Display = nullptr;
-		Window					olc_WindowRoot;
-		Window					olc_Window;
-		XVisualInfo*            olc_VisualInfo;
-		Colormap                olc_ColourMap;
-		XSetWindowAttributes    olc_SetWindowAttribs;
-		Display*				olc_WindowCreate();
-#endif
 
 	};
 
 
 	class PGEX
 	{
-		friend class olc::PixelGameEngine;
+		friend class STM::PixelGameEngine;
 	protected:
 		static PixelGameEngine* pge;
 	};
 
-	//=============================================================
 }
 
-#endif // OLC_PGE_DEF
 
-
-
-
-/*
-	Object Oriented Mode
-	~~~~~~~~~~~~~~~~~~~~
-
-	If the olcPixelGameEngine.h is called from several sources it can cause
-	multiple definitions of objects. To prevent this, ONLY ONE of the pathways
-	to including this file must have OLC_PGE_APPLICATION defined before it. This prevents
-	the definitions being duplicated.
-
-	If all else fails, create a file called "olcPixelGameEngine.cpp" with the following
-	two lines. Then you can just #include "olcPixelGameEngine.h" as normal without worrying
-	about defining things. Dont forget to include that cpp file as part of your build!
-
-	#define OLC_PGE_APPLICATION
-	#include "olcPixelGameEngine.h"
-
-*/
-
-#ifdef OLC_PGE_APPLICATION
-#undef OLC_PGE_APPLICATION
-
-namespace olc
+namespace STM
 {
 	Pixel::Pixel()
 	{
@@ -680,7 +421,7 @@ namespace olc
 		LoadFromFile(sImageFile);
 	}
 
-	Sprite::Sprite(std::string sImageFile, olc::ResourcePack *pack)
+	Sprite::Sprite(std::string sImageFile, STM::ResourcePack *pack)
 	{
 		LoadFromPGESprFile(sImageFile, pack);
 	}
@@ -699,7 +440,7 @@ namespace olc
 		if (pColData) delete pColData;
 	}
 
-	olc::rcode Sprite::LoadFromPGESprFile(std::string sImageFile, olc::ResourcePack *pack)
+	STM::rcode Sprite::LoadFromPGESprFile(std::string sImageFile, STM::ResourcePack *pack)
 	{
 		if (pColData) delete[] pColData;
 
@@ -720,10 +461,10 @@ namespace olc
 			if (ifs.is_open())
 			{
 				ReadData(ifs);
-				return olc::OK;
+				return STM::OK;
 			}
 			else
-				return olc::FAIL;
+				return STM::FAIL;
 		}
 		else
 		{
@@ -733,12 +474,12 @@ namespace olc
 		}
 
 
-		return olc::FAIL;
+		return STM::FAIL;
 	}
 
-	olc::rcode Sprite::SaveToPGESprFile(std::string sImageFile)
+	STM::rcode Sprite::SaveToPGESprFile(std::string sImageFile)
 	{
-		if (pColData == nullptr) return olc::FAIL;
+		if (pColData == nullptr) return STM::FAIL;
 
 		std::ofstream ofs;
 		ofs.open(sImageFile, std::ifstream::binary);
@@ -748,13 +489,13 @@ namespace olc
 			ofs.write((char*)&height, sizeof(int32_t));
 			ofs.write((char*)pColData, width*height * sizeof(uint32_t));
 			ofs.close();
-			return olc::OK;
+			return STM::OK;
 		}
 
-		return olc::FAIL;
+		return STM::FAIL;
 	}
 
-	olc::rcode Sprite::LoadFromFile(std::string sImageFile, olc::ResourcePack *pack)
+	STM::rcode Sprite::LoadFromFile(std::string sImageFile, STM::ResourcePack *pack)
 	{
 #ifdef _WIN32
 		// Use GDI+
@@ -770,7 +511,7 @@ namespace olc
 #endif
 		Gdiplus::Bitmap *bmp = Gdiplus::Bitmap::FromFile(wsImageFile.c_str());
 		if (bmp == nullptr)
-			return olc::NO_FILE;
+			return STM::NO_FILE;
 
 		width = bmp->GetWidth();
 		height = bmp->GetHeight();
@@ -784,7 +525,7 @@ namespace olc
 				SetPixel(x, y, Pixel(c.GetRed(), c.GetGreen(), c.GetBlue(), c.GetAlpha()));
 			}
 		delete bmp;
-		return olc::OK;
+		return STM::OK;
 #else
 		////////////////////////////////////////////////////////////////////////////
 		// Use libpng, Thanks to Guillaume Cottenceau
@@ -865,7 +606,7 @@ namespace olc
 #endif
 	}
 
-	void Sprite::SetSampleMode(olc::Sprite::Mode mode)
+	void Sprite::SetSampleMode(STM::Sprite::Mode mode)
 	{
 		modeSample = mode;
 	}
@@ -873,7 +614,7 @@ namespace olc
 
 	Pixel Sprite::GetPixel(int32_t x, int32_t y)
 	{
-		if (modeSample == olc::Sprite::Mode::NORMAL)
+		if (modeSample == STM::Sprite::Mode::NORMAL)
 		{
 			if (x >= 0 && x < width && y >= 0 && y < height)
 				return pColData[y*width + x];
@@ -920,12 +661,12 @@ namespace olc
 		float u_opposite = 1 - u_ratio;
 		float v_opposite = 1 - v_ratio;
 
-		olc::Pixel p1 = GetPixel(std::max(x, 0), std::max(y, 0));
-		olc::Pixel p2 = GetPixel(std::min(x + 1, (int)width - 1), std::max(y, 0));
-		olc::Pixel p3 = GetPixel(std::max(x, 0), std::min(y + 1, (int)height - 1));
-		olc::Pixel p4 = GetPixel(std::min(x + 1, (int)width - 1), std::min(y + 1, (int)height - 1));
+		STM::Pixel p1 = GetPixel(std::max(x, 0), std::max(y, 0));
+		STM::Pixel p2 = GetPixel(std::min(x + 1, (int)width - 1), std::max(y, 0));
+		STM::Pixel p3 = GetPixel(std::max(x, 0), std::min(y + 1, (int)height - 1));
+		STM::Pixel p4 = GetPixel(std::min(x + 1, (int)width - 1), std::min(y + 1, (int)height - 1));
 
-		return olc::Pixel(
+		return STM::Pixel(
 			(uint8_t)((p1.r * u_opposite + p2.r * u_ratio) * v_opposite + (p3.r * u_opposite + p4.r * u_ratio) * v_ratio),
 			(uint8_t)((p1.g * u_opposite + p2.g * u_ratio) * v_opposite + (p3.g * u_opposite + p4.g * u_ratio) * v_ratio),
 			(uint8_t)((p1.b * u_opposite + p2.b * u_ratio) * v_opposite + (p3.b * u_opposite + p4.b * u_ratio) * v_ratio));
@@ -933,7 +674,6 @@ namespace olc
 
 	Pixel* Sprite::GetData() { return pColData; }
 
-	//==========================================================
 
 	ResourcePack::ResourcePack()
 	{
@@ -945,10 +685,10 @@ namespace olc
 		ClearPack();
 	}
 
-	olc::rcode ResourcePack::AddToPack(std::string sFile)
+	STM::rcode ResourcePack::AddToPack(std::string sFile)
 	{
 		std::ifstream ifs(sFile, std::ifstream::binary);
-		if (!ifs.is_open()) return olc::FAIL;
+		if (!ifs.is_open()) return STM::FAIL;
 
 		// Get File Size
 		std::streampos p = 0;
@@ -969,13 +709,13 @@ namespace olc
 
 		// Add To Map
 		mapFiles[sFile] = e;
-		return olc::OK;
+		return STM::OK;
 	}
 
-	olc::rcode ResourcePack::SavePack(std::string sFile)
+	STM::rcode ResourcePack::SavePack(std::string sFile)
 	{
 		std::ofstream ofs(sFile, std::ofstream::binary);
-		if (!ofs.is_open()) return olc::FAIL;
+		if (!ofs.is_open()) return STM::FAIL;
 
 		// 1) Write Map
 		size_t nMapSize = mapFiles.size();
@@ -1013,13 +753,13 @@ namespace olc
 		}
 		ofs.close();
 
-		return olc::OK;
+		return STM::OK;
 	}
 
-	olc::rcode ResourcePack::LoadPack(std::string sFile)
+	STM::rcode ResourcePack::LoadPack(std::string sFile)
 	{
 		std::ifstream ifs(sFile, std::ifstream::binary);
-		if (!ifs.is_open()) return olc::FAIL;
+		if (!ifs.is_open()) return STM::FAIL;
 
 		// 1) Read Map
 		uint32_t nMapEntries;
@@ -1051,15 +791,15 @@ namespace olc
 		}
 
 		ifs.close();
-		return olc::OK;
+		return STM::OK;
 	}
 
-	olc::ResourcePack::sEntry ResourcePack::GetStreamBuffer(std::string sFile)
+	STM::ResourcePack::sEntry ResourcePack::GetStreamBuffer(std::string sFile)
 	{
 		return mapFiles[sFile];
 	}
 
-	olc::rcode ResourcePack::ClearPack()
+	STM::rcode ResourcePack::ClearPack()
 	{
 		for (auto &e : mapFiles)
 		{
@@ -1068,7 +808,7 @@ namespace olc
 		}
 
 		mapFiles.clear();
-		return olc::OK;
+		return STM::OK;
 	}
 
 	//==========================================================
@@ -1076,10 +816,10 @@ namespace olc
 	PixelGameEngine::PixelGameEngine()
 	{
 		sAppName = "Undefined";
-		olc::PGEX::pge = this;
+		STM::PGEX::pge = this;
 	}
 
-	olc::rcode PixelGameEngine::Construct(uint32_t screen_w, uint32_t screen_h, uint32_t pixel_w, uint32_t pixel_h, bool full_screen, bool vsync)
+	STM::rcode PixelGameEngine::Construct(uint32_t screen_w, uint32_t screen_h, uint32_t pixel_w, uint32_t pixel_h, bool full_screen, bool vsync)
 	{
 		nScreenWidth = screen_w;
 		nScreenHeight = screen_h;
@@ -1092,22 +832,17 @@ namespace olc
 		fPixelY = 2.0f / (float)(nScreenHeight);
 
 		if (nPixelWidth == 0 || nPixelHeight == 0 || nScreenWidth == 0 || nScreenHeight == 0)
-			return olc::FAIL;
+			return STM::FAIL;
 
-#ifdef _WIN32
-#ifdef UNICODE
-#ifndef __MINGW32__
 		wsAppName = ConvertS2W(sAppName);
-#endif
-#endif
-#endif
+
 		// Load the default font sheet
 		olc_ConstructFontSheet();
 
 		// Create a sprite that represents the primary drawing target
 		pDefaultDrawTarget = new Sprite(nScreenWidth, nScreenHeight);
 		SetDrawTarget(nullptr);
-		return olc::OK;
+		return STM::OK;
 	}
 
 
@@ -1128,27 +863,15 @@ namespace olc
 		olc_UpdateViewport();
 	}
 
-	olc::rcode PixelGameEngine::Start()
+	STM::rcode PixelGameEngine::Start()
 	{
 		// Construct the window
 		if (!olc_WindowCreate())
-			return olc::FAIL;
+			return STM::FAIL;
 
-		// Load libraries required for PNG file interaction
-//#ifdef _WIN32
-//		// Windows use GDI+
-//		Gdiplus::GdiplusStartupInput startupInput;
-//		ULONG_PTR			token;
-//		Gdiplus::GdiplusStartup(&token, &startupInput, NULL);
-//#else
-//		// Linux use libpng
-//
-//#endif
-		// Start the thread
 		bAtomActive = true;
 		std::thread t = std::thread(&PixelGameEngine::EngineThread, this);
 
-#ifdef _WIN32
 		// Handle Windows Message Loop
 		MSG msg;
 		while (GetMessage(&msg, NULL, 0, 0) > 0)
@@ -1156,11 +879,10 @@ namespace olc
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-#endif
 
 		// Wait for thread to be exited
 		t.join();
-		return olc::OK;
+		return STM::OK;
 	}
 
 	void PixelGameEngine::SetDrawTarget(Sprite *target)
@@ -1452,7 +1174,6 @@ namespace olc
 		DrawLine(x3, y3, x1, y1, p);
 	}
 
-	// https://www.avrfreaks.net/sites/default/files/triangles.c
 	void PixelGameEngine::FillTriangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, Pixel p)
 	{
 		auto SWAP = [](int &x, int &y) { int t = x; x = y; y = t; };
@@ -1682,7 +1403,7 @@ namespace olc
 		return nPixelMode;
 	}
 
-	void PixelGameEngine::SetPixelMode(std::function<olc::Pixel(const int x, const int y, const olc::Pixel&, const olc::Pixel&)> pixelMode)
+	void PixelGameEngine::SetPixelMode(std::function<STM::Pixel(const int x, const int y, const STM::Pixel&, const STM::Pixel&)> pixelMode)
 	{
 		funcPixelMode = pixelMode;
 		nPixelMode = Pixel::Mode::CUSTOM;
@@ -1806,86 +1527,6 @@ namespace olc
 				// Our time per frame coefficient
 				float fElapsedTime = elapsedTime.count();
 
-#ifndef _WIN32
-				// Handle Xlib Message Loop - we do this in the
-				// same thread that OpenGL was created so we dont
-				// need to worry too much about multithreading with X11
-				XEvent xev;
-				while (XPending(olc_Display))
-				{
-					XNextEvent(olc_Display, &xev);
-					if (xev.type == Expose)
-					{
-						XWindowAttributes gwa;
-						XGetWindowAttributes(olc_Display, olc_Window, &gwa);
-						nWindowWidth = gwa.width;
-						nWindowHeight = gwa.height;
-						olc_UpdateViewport();
-						glClear(GL_COLOR_BUFFER_BIT); // Thanks Benedani!
-					}
-					else if (xev.type == ConfigureNotify)
-					{
-						XConfigureEvent xce = xev.xconfigure;
-						nWindowWidth = xce.width;
-						nWindowHeight = xce.height;
-					}
-					else if (xev.type == KeyPress)
-					{
-						KeySym sym = XLookupKeysym(&xev.xkey, 0);
-						pKeyNewState[mapKeys[sym]] = true;
-						XKeyEvent *e = (XKeyEvent *)&xev; // Because DragonEye loves numpads
-						XLookupString(e, NULL, 0, &sym, NULL);
-						pKeyNewState[mapKeys[sym]] = true;
-					}
-					else if (xev.type == KeyRelease)
-					{
-						KeySym sym = XLookupKeysym(&xev.xkey, 0);
-						pKeyNewState[mapKeys[sym]] = false;
-						XKeyEvent *e = (XKeyEvent *)&xev;
-						XLookupString(e, NULL, 0, &sym, NULL);
-						pKeyNewState[mapKeys[sym]] = false;
-					}
-					else if (xev.type == ButtonPress)
-					{
-						switch (xev.xbutton.button)
-						{
-						case 1:	pMouseNewState[0] = true; break;
-						case 2:	pMouseNewState[2] = true; break;
-						case 3:	pMouseNewState[1] = true; break;
-						case 4:	olc_UpdateMouseWheel(120); break;
-						case 5:	olc_UpdateMouseWheel(-120); break;
-						default: break;
-						}
-					}
-					else if (xev.type == ButtonRelease)
-					{
-						switch (xev.xbutton.button)
-						{
-						case 1:	pMouseNewState[0] = false; break;
-						case 2:	pMouseNewState[2] = false; break;
-						case 3:	pMouseNewState[1] = false; break;
-						default: break;
-						}
-					}
-					else if (xev.type == MotionNotify)
-					{
-						olc_UpdateMouse(xev.xmotion.x, xev.xmotion.y);
-					}
-					else if (xev.type == FocusIn)
-					{
-						bHasInputFocus = true;
-					}
-					else if (xev.type == FocusOut)
-					{
-						bHasInputFocus = false;
-					}
-					else if (xev.type == ClientMessage)
-					{
-						bAtomActive = false;
-					}
-				}
-#endif
-
 				// Handle User Input - Keyboard
 				for (int i = 0; i < 256; i++)
 				{
@@ -1940,10 +1581,6 @@ namespace olc
 				nMouseWheelDelta = nMouseWheelDeltaCache;
 				nMouseWheelDeltaCache = 0;
 
-#ifdef OLC_DBG_OVERDRAW
-				olc::Sprite::nOverdrawCount = 0;
-#endif
-
 				// Handle Frame Update
 				if (!OnUserUpdate(fElapsedTime))
 					bAtomActive = false;
@@ -1964,11 +1601,7 @@ namespace olc
 				glEnd();
 
 				// Present Graphics to screen
-#ifdef _WIN32
 				SwapBuffers(glDeviceContext);
-#else
-				glXSwapBuffers(olc_Display, olc_Window);
-#endif
 
 				// Update Title Bar
 				fFrameTimer += fElapsedTime;
@@ -1978,16 +1611,8 @@ namespace olc
 					fFrameTimer -= 1.0f;
 
 					std::string sTitle = "OneLoneCoder.com - Pixel Game Engine - " + sAppName + " - FPS: " + std::to_string(nFrameCount);
-#ifdef _WIN32
-#ifdef UNICODE
 					SetWindowText(olc_hWnd, ConvertS2W(sTitle).c_str());
-#else
-					SetWindowText(olc_hWnd, sTitle.c_str());
-#endif
-#else
-					XStoreName(olc_Display, olc_Window, sTitle.c_str());
-#endif
-					nFrameCount = 0;
+
 				}
 			}
 
@@ -2003,21 +1628,11 @@ namespace olc
 			}
 		}
 
-#ifdef _WIN32
 		wglDeleteContext(glRenderContext);
 		PostMessage(olc_hWnd, WM_DESTROY, 0, 0);
-#else
-		glXMakeCurrent(olc_Display, None, NULL);
-		glXDestroyContext(olc_Display, glDeviceContext);
-		XDestroyWindow(olc_Display, olc_Window);
-		XCloseDisplay(olc_Display);
-#endif
-
 	}
 
-#ifdef _WIN32
-	// Thanks @MaGetzUb for this, which allows sprites to be defined
-	// at construction, by initialising the GDI subsystem
+
 	static class GDIPlusStartup
 	{
 	public:
@@ -2028,7 +1643,7 @@ namespace olc
 			Gdiplus::GdiplusStartup(&token, &startupInput, NULL);
 		};
 	} gdistartup;
-#endif
+
 
 
 	void PixelGameEngine::olc_ConstructFontSheet()
@@ -2051,7 +1666,7 @@ namespace olc
 		data += "O`000P08Od400g`<3V=P0G`673IP0`@3>1`00P@6O`P00g`<O`000GP800000000";
 		data += "?P9PL020O`<`N3R0@E4HC7b0@ET<ATB0@@l6C4B0O`H3N7b0?P01L3R000000020";
 
-		fontSprite = new olc::Sprite(128, 48);
+		fontSprite = new STM::Sprite(128, 48);
 		int px = 0, py = 0;
 		for (int b = 0; b < 1024; b += 4)
 		{
@@ -2064,13 +1679,12 @@ namespace olc
 			for (int i = 0; i < 24; i++)
 			{
 				int k = r & (1 << i) ? 255 : 0;
-				fontSprite->SetPixel(px, py, olc::Pixel(k, k, k, k));
+				fontSprite->SetPixel(px, py, STM::Pixel(k, k, k, k));
 				if (++py == 48) { px++; py = 0; }
 			}
 		}
 	}
 
-#ifdef _WIN32
 	HWND PixelGameEngine::olc_WindowCreate()
 	{
 		WNDCLASS wc;
@@ -2083,11 +1697,9 @@ namespace olc
 		wc.cbWndExtra = 0;
 		wc.lpszMenuName = nullptr;
 		wc.hbrBackground = nullptr;
-#ifdef UNICODE
+
 		wc.lpszClassName = L"OLC_PIXEL_GAME_ENGINE";
-#else
-		wc.lpszClassName = "OLC_PIXEL_GAME_ENGINE";
-#endif
+
 
 		RegisterClass(&wc);
 
@@ -2125,13 +1737,8 @@ namespace olc
 		int width = rWndRect.right - rWndRect.left;
 		int height = rWndRect.bottom - rWndRect.top;
 
-#ifdef UNICODE
 		olc_hWnd = CreateWindowEx(dwExStyle, L"OLC_PIXEL_GAME_ENGINE", L"", dwStyle,
 			nCosmeticOffset, nCosmeticOffset, width, height, NULL, NULL, GetModuleHandle(nullptr), this);
-#else
-		olc_hWnd = CreateWindowEx(dwExStyle, "OLC_PIXEL_GAME_ENGINE", "", dwStyle,
-			nCosmeticOffset, nCosmeticOffset, width, height, NULL, NULL, GetModuleHandle(nullptr), this);
-#endif
 
 		// Create Keyboard Mapping
 		mapKeys[0x00] = Key::NONE;
@@ -2234,126 +1841,13 @@ namespace olc
 		}
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
-#else
-	// Do the Linux stuff!
-	Display* PixelGameEngine::olc_WindowCreate()
-	{
-		XInitThreads();
 
-		// Grab the deafult display and window
-		olc_Display = XOpenDisplay(NULL);
-		olc_WindowRoot = DefaultRootWindow(olc_Display);
-
-		// Based on the display capabilities, configure the appearance of the window
-		GLint olc_GLAttribs[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
-		olc_VisualInfo = glXChooseVisual(olc_Display, 0, olc_GLAttribs);
-		olc_ColourMap = XCreateColormap(olc_Display, olc_WindowRoot, olc_VisualInfo->visual, AllocNone);
-		olc_SetWindowAttribs.colormap = olc_ColourMap;
-
-		// Register which events we are interested in receiving
-		olc_SetWindowAttribs.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask | StructureNotifyMask;
-
-		// Create the window
-		olc_Window = XCreateWindow(olc_Display, olc_WindowRoot, 30, 30, nScreenWidth * nPixelWidth, nScreenHeight * nPixelHeight, 0, olc_VisualInfo->depth, InputOutput, olc_VisualInfo->visual, CWColormap | CWEventMask, &olc_SetWindowAttribs);
-
-		Atom wmDelete = XInternAtom(olc_Display, "WM_DELETE_WINDOW", true);
-		XSetWMProtocols(olc_Display, olc_Window, &wmDelete, 1);
-
-		XMapWindow(olc_Display, olc_Window);
-		XStoreName(olc_Display, olc_Window, "OneLoneCoder.com - Pixel Game Engine");
-
-		if (bFullScreen) // Thanks DragonEye, again :D
-		{
-			Atom wm_state;
-			Atom fullscreen;
-			wm_state = XInternAtom(olc_Display, "_NET_WM_STATE", False);
-			fullscreen = XInternAtom(olc_Display, "_NET_WM_STATE_FULLSCREEN", False);
-			XEvent xev{ 0 };
-			xev.type = ClientMessage;
-			xev.xclient.window = olc_Window;
-			xev.xclient.message_type = wm_state;
-			xev.xclient.format = 32;
-			xev.xclient.data.l[0] = (bFullScreen ? 1 : 0);   // the action (0: off, 1: on, 2: toggle)
-			xev.xclient.data.l[1] = fullscreen;             // first property to alter
-			xev.xclient.data.l[2] = 0;                      // second property to alter
-			xev.xclient.data.l[3] = 0;                      // source indication
-			XMapWindow(olc_Display, olc_Window);
-			XSendEvent(olc_Display, DefaultRootWindow(olc_Display), False,
-				SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-			XFlush(olc_Display);
-			XWindowAttributes gwa;
-			XGetWindowAttributes(olc_Display, olc_Window, &gwa);
-			nWindowWidth = gwa.width;
-			nWindowHeight = gwa.height;
-			olc_UpdateViewport();
-		}
-
-		// Create Keyboard Mapping
-		mapKeys[0x00] = Key::NONE;
-		mapKeys[0x61] = Key::A; mapKeys[0x62] = Key::B; mapKeys[0x63] = Key::C; mapKeys[0x64] = Key::D; mapKeys[0x65] = Key::E;
-		mapKeys[0x66] = Key::F; mapKeys[0x67] = Key::G; mapKeys[0x68] = Key::H; mapKeys[0x69] = Key::I; mapKeys[0x6A] = Key::J;
-		mapKeys[0x6B] = Key::K; mapKeys[0x6C] = Key::L; mapKeys[0x6D] = Key::M; mapKeys[0x6E] = Key::N; mapKeys[0x6F] = Key::O;
-		mapKeys[0x70] = Key::P; mapKeys[0x71] = Key::Q; mapKeys[0x72] = Key::R; mapKeys[0x73] = Key::S; mapKeys[0x74] = Key::T;
-		mapKeys[0x75] = Key::U; mapKeys[0x76] = Key::V; mapKeys[0x77] = Key::W; mapKeys[0x78] = Key::X; mapKeys[0x79] = Key::Y;
-		mapKeys[0x7A] = Key::Z;
-
-		mapKeys[XK_F1] = Key::F1; mapKeys[XK_F2] = Key::F2; mapKeys[XK_F3] = Key::F3; mapKeys[XK_F4] = Key::F4;
-		mapKeys[XK_F5] = Key::F5; mapKeys[XK_F6] = Key::F6; mapKeys[XK_F7] = Key::F7; mapKeys[XK_F8] = Key::F8;
-		mapKeys[XK_F9] = Key::F9; mapKeys[XK_F10] = Key::F10; mapKeys[XK_F11] = Key::F11; mapKeys[XK_F12] = Key::F12;
-
-		mapKeys[XK_Down] = Key::DOWN; mapKeys[XK_Left] = Key::LEFT; mapKeys[XK_Right] = Key::RIGHT; mapKeys[XK_Up] = Key::UP;
-		mapKeys[XK_KP_Enter] = Key::ENTER; mapKeys[XK_Return] = Key::ENTER;
-
-		mapKeys[XK_BackSpace] = Key::BACK; mapKeys[XK_Escape] = Key::ESCAPE; mapKeys[XK_Linefeed] = Key::ENTER;	mapKeys[XK_Pause] = Key::PAUSE;
-		mapKeys[XK_Scroll_Lock] = Key::SCROLL; mapKeys[XK_Tab] = Key::TAB; mapKeys[XK_Delete] = Key::DEL; mapKeys[XK_Home] = Key::HOME;
-		mapKeys[XK_End] = Key::END; mapKeys[XK_Page_Up] = Key::PGUP; mapKeys[XK_Page_Down] = Key::PGDN;	mapKeys[XK_Insert] = Key::INS;
-		mapKeys[XK_Shift_L] = Key::SHIFT; mapKeys[XK_Shift_R] = Key::SHIFT; mapKeys[XK_Control_L] = Key::CTRL; mapKeys[XK_Control_R] = Key::CTRL;
-		mapKeys[XK_space] = Key::SPACE;
-
-		mapKeys[XK_0] = Key::K0; mapKeys[XK_1] = Key::K1; mapKeys[XK_2] = Key::K2; mapKeys[XK_3] = Key::K3; mapKeys[XK_4] = Key::K4;
-		mapKeys[XK_5] = Key::K5; mapKeys[XK_6] = Key::K6; mapKeys[XK_7] = Key::K7; mapKeys[XK_8] = Key::K8; mapKeys[XK_9] = Key::K9;
-
-		mapKeys[XK_KP_0] = Key::NP0; mapKeys[XK_KP_1] = Key::NP1; mapKeys[XK_KP_2] = Key::NP2; mapKeys[XK_KP_3] = Key::NP3; mapKeys[XK_KP_4] = Key::NP4;
-		mapKeys[XK_KP_5] = Key::NP5; mapKeys[XK_KP_6] = Key::NP6; mapKeys[XK_KP_7] = Key::NP7; mapKeys[XK_KP_8] = Key::NP8; mapKeys[XK_KP_9] = Key::NP9;
-		mapKeys[XK_KP_Multiply] = Key::NP_MUL; mapKeys[XK_KP_Add] = Key::NP_ADD; mapKeys[XK_KP_Divide] = Key::NP_DIV; mapKeys[XK_KP_Subtract] = Key::NP_SUB; mapKeys[XK_KP_Decimal] = Key::NP_DECIMAL;
-
-		return olc_Display;
-	}
-
-	bool PixelGameEngine::olc_OpenGLCreate()
-	{
-		glDeviceContext = glXCreateContext(olc_Display, olc_VisualInfo, nullptr, GL_TRUE);
-		glXMakeCurrent(olc_Display, olc_Window, glDeviceContext);
-
-		XWindowAttributes gwa;
-		XGetWindowAttributes(olc_Display, olc_Window, &gwa);
-		glViewport(0, 0, gwa.width, gwa.height);
-
-		glSwapIntervalEXT = nullptr;
-		glSwapIntervalEXT = (glSwapInterval_t*)glXGetProcAddress((unsigned char*)"glXSwapIntervalEXT");
-		if (glSwapIntervalEXT && !bEnableVSYNC)
-			glSwapIntervalEXT(olc_Display, olc_Window, 0);
-		else
-		{
-			printf("NOTE: Could not disable VSYNC, glXSwapIntervalEXT() was not found!\n");
-			printf("      Don't worry though, things will still work, it's just the\n");
-			printf("      frame rate will be capped to your monitors refresh rate - javidx9\n");
-		}
-
-		return true;
-	}
-
-#endif
 
 	// Need a couple of statics as these are singleton instances
 	// read from multiple locations
 	std::atomic<bool> PixelGameEngine::bAtomActive{ false };
 	std::map<size_t, uint8_t> PixelGameEngine::mapKeys;
-	olc::PixelGameEngine* olc::PGEX::pge = nullptr;
-#ifdef OLC_DBG_OVERDRAW
-	int olc::Sprite::nOverdrawCount = 0;
-#endif
-	//=============================================================
-}
+	STM::PixelGameEngine* STM::PGEX::pge = nullptr;
 
+}
 #endif

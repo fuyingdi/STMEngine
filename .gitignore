@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+*.vs/
+*DEBUG/
+*Release/
+*STMEngine.vcxproj*
+*STMEngine.sln
+
+
