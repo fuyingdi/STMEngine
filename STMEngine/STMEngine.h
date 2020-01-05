@@ -29,148 +29,20 @@
 #include <functional>
 #include <algorithm>
 
+#include "vec2.h"
+//#include "pixel.h"
+#include "sprite.h"
+
 namespace STM 
 {
-	struct Pixel
-	{
-		union
-		{
-			uint32_t n = 0xFF000000;
-			struct
-			{
-				uint8_t r;	uint8_t g;	uint8_t b;	uint8_t a;
-			};
-		};
-
-		Pixel();
-		Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha = 255);
-		Pixel(uint32_t p);
-
-		enum Mode { NORMAL, MASK, ALPHA, CUSTOM };
-
-		bool operator==(const Pixel& p) const;
-		bool operator!=(const Pixel& p) const;
-	};
-
-	static const Pixel
-		WHITE(255, 255, 255),
-		GREY(192, 192, 192), DARK_GREY(128, 128, 128), VERY_DARK_GREY(64, 64, 64),
-		RED(255, 0, 0),		 DARK_RED(128, 0, 0),	   VERY_DARK_RED(64, 0, 0),
-		YELLOW(255, 255, 0), DARK_YELLOW(128, 128, 0), VERY_DARK_YELLOW(64, 64, 0),
-		GREEN(0, 255, 0),    DARK_GREEN(0, 128, 0),    VERY_DARK_GREEN(0, 64, 0),
-		CYAN(0, 255, 255),   DARK_CYAN(0, 128, 128),   VERY_DARK_CYAN(0, 64, 64),
-		BLUE(0, 0, 255),	 DARK_BLUE(0, 0, 128),	   VERY_DARK_BLUE(0, 0, 64),
-		MAGENTA(255, 0, 255), DARK_MAGENTA(128, 0, 128), VERY_DARK_MAGENTA(64, 0, 64),
-		BLACK(0, 0, 0),
-		BLANK(0, 0, 0, 0);
-
-	enum rcode
-	{
-		FAIL = 0,
-		OK = 1,
-		NO_FILE = -1,
-	};
-
-	//==================================================================================
-
-	template <class T>
-	struct vec2_generic
-	{
-		T x = 0;
-		T y = 0;
-
-		inline vec2_generic() : x(0), y(0) {                                                      }
-		inline vec2_generic(T _x, T _y) : x(_x), y(_y) {                                                      }
-		inline vec2_generic(const vec2_generic& v) : x(v.x), y(v.y) {                                                      }
-		inline T mag() { return sqrt(x * x + y * y); }
-		inline T mag2() { return x * x + y * y; }
-		inline vec2_generic  norm() { T r = 1 / mag(); return vec2_generic(x*r, y*r); }
-		inline vec2_generic  perp() { return vec2_generic(-y, x); }
-		inline T dot(const vec2_generic& rhs) { return this->x * rhs.x + this->y * rhs.y; }
-		inline T cross(const vec2_generic& rhs) { return this->x * rhs.y - this->y * rhs.x; }
-		inline vec2_generic  operator +  (const vec2_generic& rhs) const { return vec2_generic(this->x + rhs.x, this->y + rhs.y); }
-		inline vec2_generic  operator -  (const vec2_generic& rhs) const { return vec2_generic(this->x - rhs.x, this->y - rhs.y); }
-		inline vec2_generic  operator *  (const T& rhs)           const { return vec2_generic(this->x * rhs, this->y * rhs); }
-		inline vec2_generic  operator /  (const T& rhs)           const { return vec2_generic(this->x / rhs, this->y / rhs); }
-		inline vec2_generic& operator += (const vec2_generic& rhs) { this->x += rhs.x; this->y += rhs.y; return *this; }
-		inline vec2_generic& operator -= (const vec2_generic& rhs) { this->x -= rhs.x; this->y -= rhs.y; return *this; }
-		inline vec2_generic& operator *= (const T& rhs) { this->x *= rhs; this->y *= rhs; return *this; }
-		inline vec2_generic& operator /= (const T& rhs) { this->x /= rhs; this->y /= rhs; return *this; }
-		inline T& operator [] (std::size_t i) { return *((T*)this + i);	   /* <-- D'oh :( */ }
-	};
-
-	template<class T> inline vec2_generic<T> operator * (const float& lhs, const vec2_generic<T>& rhs) { return vec2_generic<T>(lhs * rhs.x, lhs * rhs.y); }
-	template<class T> inline vec2_generic<T> operator * (const double& lhs, const vec2_generic<T>& rhs) { return vec2_generic<T>(lhs * rhs.x, lhs * rhs.y); }
-	template<class T> inline vec2_generic<T> operator * (const int& lhs, const vec2_generic<T>& rhs) { return vec2_generic<T>(lhs * rhs.x, lhs * rhs.y); }
-	template<class T> inline vec2_generic<T> operator / (const float& lhs, const vec2_generic<T>& rhs) { return vec2_generic<T>(lhs / rhs.x, lhs / rhs.y); }
-	template<class T> inline vec2_generic<T> operator / (const double& lhs, const vec2_generic<T>& rhs) { return vec2_generic<T>(lhs / rhs.x, lhs / rhs.y); }
-	template<class T> inline vec2_generic<T> operator / (const int& lhs, const vec2_generic<T>& rhs) { return vec2_generic<T>(lhs / rhs.x, lhs / rhs.y); }
-
-	typedef vec2_generic<int> vi2d;
-	typedef vec2_generic<float> vf2d;
-	typedef vec2_generic<double> vd2d;
-
-	//=============================================================
-
+	const uint8_t aconst = 1;
 	struct HWButton
 	{
 		bool Pressed = false;	// Set once during the frame the event occurs
 		bool Released = false;	// Set once during the frame the event occurs
 		bool Hold = false;		// Set true for all frames between pressed and released events
 	};
-
-	//=============================================================
-	class ResourcePack
-	{
-	public:
-		ResourcePack();
-		~ResourcePack();
-		struct sEntry : public std::streambuf {
-			uint32_t nID, nFileOffset, nFileSize; uint8_t* data; void _config() { this->setg((char*)data, (char*)data, (char*)(data + nFileSize)); }
-		};
-	public:
-		STM::rcode AddToPack(std::string sFile);
-	public:
-		STM::rcode SavePack(std::string sFile);
-		STM::rcode LoadPack(std::string sFile);
-		STM::rcode ClearPack();
-	public:
-		STM::ResourcePack::sEntry GetStreamBuffer(std::string sFile);
-
-	private:
-		std::map<std::string, sEntry> mapFiles;
-	};
-
-	// A bitmap-like structure that stores a 2D array of Pixels
-	class Sprite
-	{
-	public:
-		Sprite();
-		Sprite(std::string sImageFile);
-		Sprite(std::string sImageFile, STM::ResourcePack *pack);
-		Sprite(int32_t w, int32_t h);
-		~Sprite();
-	public:
-		STM::rcode LoadFromFile(std::string sImageFile, STM::ResourcePack *pack = nullptr);
-		STM::rcode LoadFromPGESprFile(std::string sImageFile, STM::ResourcePack *pack = nullptr);
-		STM::rcode SaveToPGESprFile(std::string sImageFile);
-	public:
-		int32_t width = 0;
-		int32_t height = 0;
-		enum Mode { NORMAL, PERIODIC };
-	public:
-		void SetSampleMode(STM::Sprite::Mode mode = STM::Sprite::Mode::NORMAL);
-		Pixel GetPixel(int32_t x, int32_t y);
-		bool  SetPixel(int32_t x, int32_t y, Pixel p);
-
-		Pixel Sample(float x, float y);
-		Pixel SampleBL(float u, float v);
-		Pixel* GetData();
-	private:
-		Pixel *pColData = nullptr;
-		Mode modeSample = Mode::NORMAL;
-	};
-
+	
 	enum Key
 	{
 		NONE,
@@ -249,7 +121,7 @@ namespace STM
 		// Draws a line from (x1,y1) to (x2,y2)
 		void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, Pixel p = STM::WHITE, uint32_t pattern = 0xFFFFFFFF);
 		// Draws a circle located at (x,y) with radius
-		void DrawCircle(int32_t x, int32_t y, int32_t radius, Pixel p = STM::WHITE, uint8_t mask = 0xFF);
+		void DrawCircle(int32_t x, int32_t y, int32_t radius, Pixel p = Pixel(STM::WHITE), uint8_t mask = 0xFF);
 		// Fills a circle located at (x,y) with radius
 		void FillCircle(int32_t x, int32_t y, int32_t radius, Pixel p = STM::WHITE);
 		// Draws a rectangle at (x,y) to (x+w,y+h)
@@ -271,6 +143,8 @@ namespace STM
 		void Clear(Pixel p);
 		// Resize the primary screen sprite
 		void SetScreenSize(int w, int h);
+
+		void aaa(uint8_t a = aconst);
 
 	public: // Branding
 		std::string sAppName;
@@ -317,8 +191,6 @@ namespace STM
 		bool		pMouseNewState[5]{ 0 };
 		bool		pMouseOldState[5]{ 0 };
 		HWButton	pMouseState[5];
-
-#ifdef _WIN32
 		HDC			glDeviceContext = nullptr;
 		HGLRC		glRenderContext = nullptr;
 
@@ -357,34 +229,3 @@ namespace STM
 }
 
 
-namespace STM
-{
-	Pixel::Pixel()
-	{
-		r = 0; g = 0; b = 0; a = 255;
-	}
-
-	Pixel::Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-	{
-		r = red; g = green; b = blue; a = alpha;
-	}
-
-	Pixel::Pixel(uint32_t p)
-	{
-		n = p;
-	}
-
-	bool Pixel::operator==(const Pixel& p) const
-	{
-		return n == p.n;
-	}
-
-	bool Pixel::operator!=(const Pixel& p) const
-	{
-		return n != p.n;
-	}
-
-	//==========================================================
-
-}
-#endif
